@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import seaborn as sns
 from sklearn.model_selection import train_test_split
 from sklearn.svm import SVR
 from sklearn.linear_model import LogisticRegression
@@ -25,7 +26,7 @@ X_scaled = scaler.fit_transform(X)
 
 X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.2, random_state=42)
 
-# Advanced SVM Regression Model
+# SVM Regression Model
 svm_model = SVR(kernel='rbf', C=100, gamma=0.1, epsilon=0.1)
 svm_model.fit(X_train, y_train)
 
@@ -49,21 +50,20 @@ logistic_model.fit(X_train_cls, y_train_cls)
 st.title("COVID-19 Cases Prediction in USA")
 st.write("Advanced prediction and classification of COVID-19 cases.")
 
-### 📊 **Historical Data Graph**
+### 📊 **Bar Graph 1: Historical Cases**
 st.subheader("Historical COVID-19 Cases")
 fig1, ax1 = plt.subplots()
-ax1.plot(df_historical["day"], df_historical["cases"], label="Actual Cases", marker="o", linestyle="-", color="blue")
+sns.barplot(x=df_historical["day"], y=df_historical["cases"], color="blue", ax=ax1)
 ax1.set_xlabel("Day")
 ax1.set_ylabel("Number of Cases")
 ax1.set_title("Past 30 Days COVID-19 Cases")
-ax1.legend()
 st.pyplot(fig1)
 
-### 📈 **SVM Regression Graph**
+### 📊 **Bar Graph 2: SVM Predicted Cases vs. Actual Cases**
 st.subheader("SVM Predicted Cases vs. Actual Cases")
 fig2, ax2 = plt.subplots()
-ax2.scatter(df_historical["day"], df_historical["cases"], label="Actual Cases", color="blue")
-ax2.plot(days_future, predicted_cases_svm, label="SVM Predicted Cases", linestyle="--", color="red")
+sns.barplot(x=df_historical["day"], y=df_historical["cases"], color="blue", label="Actual Cases", ax=ax2)
+sns.barplot(x=days_future.flatten(), y=predicted_cases_svm, color="red", alpha=0.6, label="Predicted Cases", ax=ax2)
 ax2.set_xlabel("Day")
 ax2.set_ylabel("Number of Cases")
 ax2.set_title("SVM Regression Prediction of COVID-19 Cases")
@@ -87,3 +87,4 @@ if st.button("Classify Day"):
     classification = logistic_model.predict([[day_input_cls]])
     category = "High Cases" if classification[0] == 1 else "Low Cases"
     st.write(f"Day {day_input_cls} is classified as: {category}")
+
