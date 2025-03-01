@@ -25,13 +25,14 @@ X_scaled = scaler.fit_transform(X)
 
 X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.2, random_state=42)
 
-# Advanced SVM Regression Model with Hyperparameter Tuning
+# Advanced SVM Regression Model
 svm_model = SVR(kernel='rbf', C=100, gamma=0.1, epsilon=0.1)
 svm_model.fit(X_train, y_train)
 
-# Predict next day's cases
-next_day = scaler.transform([[31]])
-predicted_cases_svm = svm_model.predict(next_day)
+# Predict cases for visualization
+days_future = np.array(range(1, 35)).reshape(-1, 1)  # Predict for 4 extra days
+days_future_scaled = scaler.transform(days_future)
+predicted_cases_svm = svm_model.predict(days_future_scaled)
 
 # Prepare data for Logistic Regression (binary classification)
 df_historical["high_cases"] = (df_historical["cases"] > 50000).astype(int)
@@ -40,13 +41,34 @@ y_classification = df_historical["high_cases"]
 
 X_train_cls, X_test_cls, y_train_cls, y_test_cls = train_test_split(X_classification, y_classification, test_size=0.2, random_state=42)
 
-# Advanced Logistic Regression Model with Regularization
+# Logistic Regression Model
 logistic_model = LogisticRegression(C=1.0, solver='liblinear')
 logistic_model.fit(X_train_cls, y_train_cls)
 
 # Streamlit App
 st.title("COVID-19 Cases Prediction in USA")
 st.write("Advanced prediction and classification of COVID-19 cases.")
+
+### 📊 **Historical Data Graph**
+st.subheader("Historical COVID-19 Cases")
+fig1, ax1 = plt.subplots()
+ax1.plot(df_historical["day"], df_historical["cases"], label="Actual Cases", marker="o", linestyle="-", color="blue")
+ax1.set_xlabel("Day")
+ax1.set_ylabel("Number of Cases")
+ax1.set_title("Past 30 Days COVID-19 Cases")
+ax1.legend()
+st.pyplot(fig1)
+
+### 📈 **SVM Regression Graph**
+st.subheader("SVM Predicted Cases vs. Actual Cases")
+fig2, ax2 = plt.subplots()
+ax2.scatter(df_historical["day"], df_historical["cases"], label="Actual Cases", color="blue")
+ax2.plot(days_future, predicted_cases_svm, label="SVM Predicted Cases", linestyle="--", color="red")
+ax2.set_xlabel("Day")
+ax2.set_ylabel("Number of Cases")
+ax2.set_title("SVM Regression Prediction of COVID-19 Cases")
+ax2.legend()
+st.pyplot(fig2)
 
 # User Input for Regression
 st.subheader("Advanced SVM Regression Prediction")
@@ -65,4 +87,3 @@ if st.button("Classify Day"):
     classification = logistic_model.predict([[day_input_cls]])
     category = "High Cases" if classification[0] == 1 else "Low Cases"
     st.write(f"Day {day_input_cls} is classified as: {category}")
-
