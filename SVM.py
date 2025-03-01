@@ -25,8 +25,8 @@ X_scaled = scaler.fit_transform(X)
 
 X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.2, random_state=42)
 
-# SVM Regression Model
-svm_model = SVR(kernel='rbf')
+# Advanced SVM Regression Model with Hyperparameter Tuning
+svm_model = SVR(kernel='rbf', C=100, gamma=0.1, epsilon=0.1)
 svm_model.fit(X_train, y_train)
 
 # Predict next day's cases
@@ -40,15 +40,16 @@ y_classification = df_historical["high_cases"]
 
 X_train_cls, X_test_cls, y_train_cls, y_test_cls = train_test_split(X_classification, y_classification, test_size=0.2, random_state=42)
 
-logistic_model = LogisticRegression()
+# Advanced Logistic Regression Model with Regularization
+logistic_model = LogisticRegression(C=1.0, solver='liblinear')
 logistic_model.fit(X_train_cls, y_train_cls)
 
 # Streamlit App
-st.title("COVID-19 Cases Prediction with SVM and Logistic Regression")
-st.write("Predicting COVID-19 cases and classifying high/low case days.")
+st.title("COVID-19 Cases Prediction in USA")
+st.write("Advanced prediction and classification of COVID-19 cases.")
 
 # User Input for Regression
-st.subheader("SVM Regression Prediction")
+st.subheader("Advanced SVM Regression Prediction")
 day_input = st.number_input("Enter day number (e.g., 31 for prediction)", min_value=1, max_value=100)
 
 if st.button("Predict Cases with SVM"):
@@ -57,10 +58,11 @@ if st.button("Predict Cases with SVM"):
     st.write(f"Predicted cases for day {day_input}: {int(prediction[0])}")
 
 # User Input for Classification
-st.subheader("Logistic Regression Classification")
+st.subheader("Advanced Logistic Regression Classification")
 day_input_cls = st.number_input("Enter day number for classification", min_value=1, max_value=30)
 
 if st.button("Classify Day"):
     classification = logistic_model.predict([[day_input_cls]])
     category = "High Cases" if classification[0] == 1 else "Low Cases"
     st.write(f"Day {day_input_cls} is classified as: {category}")
+
