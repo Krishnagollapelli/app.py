@@ -1,5 +1,11 @@
 streamlit
-pandas 
-requests 
-scikit-learn 
+yfinance
+pandas
+numpy
 matplotlib
+plotly
+scikit-learn
+requests
+beautifulsoup4
+lxml
+ta
