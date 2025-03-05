@@ -11,3 +11,9 @@ lxml
 ta
 tensorflow
 bcrypt
+streamlit
+mysql-connector-python
+bcrypt
+pandas
+plotly
+requests
